@@ -1,0 +1,38 @@
+# Use the official uv Docker image with Python 3.12
+FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
+
+# Install git (required for uv to clone repositories)
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends git && \
+    rm -rf /var/lib/apt/lists/*
+
+# Create non-root user for security
+RUN groupadd --system --gid 999 nonroot \
+ && useradd --system --gid 999 --uid 999 --create-home nonroot
+
+# Set working directory
+WORKDIR /app
+
+# Configure uv environment variables
+ENV UV_COMPILE_BYTECODE=1 \
+    UV_LINK_MODE=copy
+
+# Clone and install mealie-mcp-server from GitHub repository
+RUN git clone https://github.com/rldiao/mealie-mcp-server.git /app && \
+    uv sync --locked && \
+    chown -R nonroot:nonroot /app
+
+# Add OCI labels for GitHub Container Registry
+LABEL org.opencontainers.image.source=https://github.com/danielpalstra/mealie-mcp-server-docker
+LABEL org.opencontainers.image.description="Dockerized Mealie MCP Server - provides MCP interface to Mealie recipe manager"
+LABEL org.opencontainers.image.licenses=MIT
+
+# Ensure PATH includes virtual environment
+ENV PATH="/app/.venv/bin:$PATH"
+
+# Switch to non-root user
+USER nonroot
+
+# Set the entrypoint to run the MCP server
+# The server expects MEALIE_BASE_URL and MEALIE_API_KEY environment variables
+ENTRYPOINT ["python", "src/server.py"]
