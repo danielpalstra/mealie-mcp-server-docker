@@ -22,6 +22,9 @@ RUN git clone https://github.com/rldiao/mealie-mcp-server.git /app && \
     uv sync --locked && \
     chown -R nonroot:nonroot /app
 
+RUN uv sync --locked \
+    && uv add fastmcp
+
 # Add OCI labels for GitHub Container Registry
 LABEL org.opencontainers.image.source=https://github.com/danielpalstra/mealie-mcp-server-docker
 LABEL org.opencontainers.image.description="Dockerized Mealie MCP Server - provides MCP interface to Mealie recipe manager"
@@ -30,9 +33,13 @@ LABEL org.opencontainers.image.licenses=MIT
 # Ensure PATH includes virtual environment
 ENV PATH="/app/.venv/bin:$PATH"
 
+EXPOSE 8000
+
 # Switch to non-root user
 USER nonroot
 
 # Set the entrypoint to run the MCP server
 # The server expects MEALIE_BASE_URL and MEALIE_API_KEY environment variables
-ENTRYPOINT ["python", "src/server.py"]
+# ENTRYPOINT ["python", "src/server.py"]
+
+ENTRYPOINT ["fastmcp", "run", "src/server.py", "--host", "0.0.0.0", "--with", "httpx", "--transport", "http"]
