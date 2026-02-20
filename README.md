@@ -93,6 +93,84 @@ To use with Claude Desktop, add this to your `claude_desktop_config.json`:
 }
 ```
 
+**Using Environment Variables from Host:**
+
+If you have `MEALIE_BASE_URL` and `MEALIE_API_KEY` set in your shell environment (e.g., in `~/.secrets`), you can reference them without hardcoding values:
+
+```json
+{
+  "mcpServers": {
+    "mealie": {
+      "command": "docker",
+      "args": [
+        "run",
+        "-i",
+        "--rm",
+        "-e",
+        "MEALIE_BASE_URL",
+        "-e",
+        "MEALIE_API_KEY",
+        "ghcr.io/danielpalstra/mealie-mcp-server-docker:main"
+      ]
+    }
+  }
+}
+```
+
+Make sure to source your secrets file before starting the MCP client:
+
+```bash
+# In ~/.secrets or ~/.config/fish/config.fish
+export MEALIE_BASE_URL=https://mealie.example.com
+export MEALIE_API_KEY=your-api-key
+
+# Or in fish shell
+set -x MEALIE_BASE_URL https://mealie.example.com
+set -x MEALIE_API_KEY your-api-key
+```
+
+### HTTP Server Mode (Optional)
+
+The container also supports running as an HTTP server using FastMCP:
+
+```bash
+docker run -t \
+  -p 8000:8000 \
+  -e MEALIE_BASE_URL=https://mealie.example.com \
+  -e MEALIE_API_KEY=your-api-key \
+  ghcr.io/danielpalstra/mealie-mcp-server-docker:main
+```
+
+This exposes the MCP server on http://localhost:8000 for programmatic access or debugging.
+
+### Testing the MCP Server
+
+To verify the server is working correctly:
+
+1. **Test with environment variables:**
+   ```bash
+   # Set your credentials
+   export MEALIE_BASE_URL=https://your-mealie.com
+   export MEALIE_API_KEY=your-key
+   
+   # Run the server
+   docker run -i --rm \
+     -e MEALIE_BASE_URL \
+     -e MEALIE_API_KEY \
+     ghcr.io/danielpalstra/mealie-mcp-server-docker:main
+   ```
+
+2. **Test HTTP mode:**
+   ```bash
+   docker run -t --rm \
+     -p 8000:8000 \
+     -e MEALIE_BASE_URL=$MEALIE_BASE_URL \
+     -e MEALIE_API_KEY=$MEALIE_API_KEY \
+     ghcr.io/danielpalstra/mealie-mcp-server-docker:main
+   ```
+   
+   Then visit http://localhost:8000 in your browser to see the FastMCP interface.
+
 ## Available Tags
 
 - `main` - Latest build from the main branch

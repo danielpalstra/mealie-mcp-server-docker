@@ -25,6 +25,8 @@ RUN git clone https://github.com/rldiao/mealie-mcp-server.git /app && \
 RUN uv sync --locked \
     && uv add fastmcp
 
+COPY server.py /app/src/server.py
+
 # Add OCI labels for GitHub Container Registry
 LABEL org.opencontainers.image.source=https://github.com/danielpalstra/mealie-mcp-server-docker
 LABEL org.opencontainers.image.description="Dockerized Mealie MCP Server - provides MCP interface to Mealie recipe manager"
