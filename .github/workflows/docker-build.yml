@@ -65,9 +65,12 @@ jobs:
               echo "Container is running"
               sleep 2
               
-              # Test if port 8000 responds
-              if curl -f http://localhost:8000 || curl -s http://localhost:8000 | grep -q "FastMCP\|MCP\|Method Not Allowed\|404"; then
-                echo "✓ Port 8000 is responding"
+              # Test if /mcp endpoint responds (HTTP status != 000 and != 404 means server is healthy)
+              HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/mcp)
+              echo "HTTP response code from /mcp: $HTTP_CODE"
+              
+              if [ "$HTTP_CODE" != "000" ] && [ "$HTTP_CODE" != "404" ]; then
+                echo "✓ MCP endpoint is responding (status $HTTP_CODE)"
                 docker logs mealie-mcp-test
                 docker stop mealie-mcp-test
                 exit 0
