@@ -18,7 +18,7 @@ ENV UV_COMPILE_BYTECODE=1 \
     UV_LINK_MODE=copy
 
 # Clone and install mealie-mcp-server from GitHub repository
-RUN git clone https://github.com/rldiao/mealie-mcp-server.git /app && \
+RUN git clone https://github.com/gloos/mealie-mcp-server.git /app && \
     uv sync --locked && \
     chown -R nonroot:nonroot /app
 
