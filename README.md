@@ -215,6 +215,56 @@ MIT
 
 Contributions are welcome! Please open an issue or submit a pull request.
 
+### Commit Message Convention
+
+This project uses [Conventional Commits](https://www.conventionalcommits.org/) for automated semantic versioning and release management.
+
+**Commit message format:**
+```
+<type>(<optional scope>): <description>
+
+[optional body]
+
+[optional footer(s)]
+```
+
+**Types that trigger releases:**
+- `feat:` - A new feature (triggers **minor** version bump, e.g., 1.0.0 → 1.1.0)
+- `fix:` - A bug fix (triggers **patch** version bump, e.g., 1.0.0 → 1.0.1)
+- `BREAKING CHANGE:` - Breaking API change (triggers **major** version bump, e.g., 1.0.0 → 2.0.0)
+
+**Other types (no release):**
+- `docs:` - Documentation changes
+- `chore:` - Maintenance tasks
+- `ci:` - CI/CD changes
+- `refactor:` - Code refactoring
+- `test:` - Adding or updating tests
+
+**Examples:**
+```bash
+# Feature (minor bump)
+git commit -m "feat: add support for recipe tags filtering"
+
+# Bug fix (patch bump)
+git commit -m "fix: correct API endpoint for meal plans"
+
+# Breaking change (major bump)
+git commit -m "feat!: redesign configuration format
+
+BREAKING CHANGE: configuration now uses YAML instead of JSON"
+```
+
+**Automated workflow:**
+1. Commit with conventional message format
+2. Merge to `main` branch
+3. GitHub Actions automatically:
+   - Analyzes commit messages
+   - Determines version number
+   - Creates git tag
+   - Generates changelog
+   - Creates GitHub release
+   - Builds and pushes Docker images with version tags
+
 ## Troubleshooting
 
 ### Connection Issues
