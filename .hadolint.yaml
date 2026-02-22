@@ -1,0 +1,26 @@
+# Hadolint configuration for mealie-mcp-server-docker
+# Reference: https://github.com/hadolint/hadolint
+
+# Ignore specific rules that don't apply to this project
+ignored:
+  # DL3008: Pin versions in apt get install
+  # Rationale: git is a build-time dependency; pinning versions can cause
+  # build failures when packages are updated in Debian repositories
+  - DL3008
+
+# Failure threshold: error (warnings won't fail the build)
+failure-threshold: error
+
+# Optional: Override specific rules
+# override:
+#   error:
+#     - DL3001
+#   warning:
+#     - DL3042
+#   info:
+#     - DL3033
+
+# Trusted registries for base images
+trustedRegistries:
+  - ghcr.io
+  - docker.io
